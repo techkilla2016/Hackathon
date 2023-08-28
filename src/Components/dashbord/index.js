@@ -10,7 +10,7 @@ const Dashbord = () => {
             {
                 main?.map((curItem, keys) => {
                     return (
-                        <Col xxl={4} xl={4} lg={4} md={6} sm={12} xs={12} className='mb-5 pb-4'>
+                        <Col xxl={4} xl={4} lg={4} md={6} sm={12} xs={12} key={keys} className='mb-5 pb-4'>
                             <div className="col-inner px-3">
                                 <div className="col-main py-3 d-flex align-item-center justify-content-between">
                                     <div className="icon-box">

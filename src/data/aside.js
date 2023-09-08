@@ -11,6 +11,6 @@ export const asideMenu = [
     {
         icon: <BsClipboardData />,
         title: 'Master Data',
-        link: '/master-data'
+        link: '/master'
     },
 ]

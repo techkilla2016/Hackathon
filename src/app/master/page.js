@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import Header from '@/Components/header'
 import { BsClipboardData } from 'react-icons/bs'
@@ -21,15 +21,30 @@ var subscribe = undefined;
 
 const City = ({ params }) => {
 
-    // useEffect(() => {
-    //     subscribe = onSnapshot(collection(db, "Users"),
-    //         (snapshot) => {
-    //             var docs = snapshot.docs;
+    const [numEmails, setNumEmails] = useState(0)
+    const [numScanned, setNumScanned] = useState(0)
 
-    //             console.log(docs[0].data())
-    //         });
-    //     }
-    // )
+    useEffect(() => {
+        subscribe = onSnapshot(collection(db, "Users"),
+            (snapshot) => {
+                var docs = snapshot.docs;
+                var emails = 0;
+                var scanned = 0;
+                docs.map((doc) => {
+                    if (doc.data().obj.hackathon_registration_date != undefined) {
+                        emails++;
+                    }
+
+                    if (doc.data().obj.scanTime != undefined) {
+                        scanned++;
+                    }
+                })
+
+                setNumEmails(emails);
+                setNumScanned(scanned);
+            });
+    }
+    )
 
     return (
         <div className="main">
@@ -48,7 +63,7 @@ const City = ({ params }) => {
                                     </div>
                                     <div className="content-box-scan">
                                         <h5 className='text-center'>Total QR Send</h5>
-                                        <p className='scane'>0</p>
+                                        <p className='scane'>{numEmails}</p>
                                     </div>
                                 </div>
                             </div>
@@ -63,7 +78,7 @@ const City = ({ params }) => {
                                     </div>
                                     <div className="content-box-scan">
                                         <h5 className='text-center'>Total QR Scanned</h5>
-                                        <p className='scane'>0</p>
+                                        <p className='scane'>{numScanned}</p>
                                     </div>
                                 </div>
                             </div>

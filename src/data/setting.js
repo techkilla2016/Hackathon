@@ -1,7 +1,7 @@
 export const settingData = [
     {
         sr: 'data',
-        head1: "data",
+        head1: "asdf",
         head2: "data",
         head3: "data",
         head4: "data",

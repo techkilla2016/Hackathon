@@ -7,7 +7,7 @@ var subscribe = undefined;
 
 const CityTable = ({ city, building }) => {
 
-
+    const [searchVal, setSearchVal] = useState('')
     const [cityData, setCityData] = useState([]);
 
     useEffect(() => {
@@ -16,20 +16,39 @@ const CityTable = ({ city, building }) => {
                 var docs = snapshot.docs;
                 setCityData(docs)
             });
-    }, [!subscribe]
-    )
+    }, [!subscribe])
 
-    const filter = (e)=>{
-        cityData.filter((doc)=>{
-           return false
+    const filter = (e) => {
+        cityData.filter((doc) => {
+            return false
         })
+    }
+
+    const handlChange = ({ target }) => {
+        setSearchVal(target.value)
+        if (target.value == '') {
+            subscribe = onSnapshot(collection(db, "Users"),
+                (snapshot) => {
+                    var docs = snapshot.docs;
+                    setCityData(docs)
+                });
+        }
+    }
+    const handleSearch = () => {
+        const newCity = cityData.filter((item) => {
+            const val = item.data().obj?.Email
+            if (val.includes(searchVal)) {
+                return item
+            }
+        })
+        setCityData(newCity)
     }
 
     return (
         <div className='setting py-4'>
             <div className="search d-flex justify-content-start py-4">
-                <input onKeyUp={filter} type="search" name="" id="search" placeholder='Enter email id' className='form-control py-2' />
-                <button className='btn btn-primary mx-2'><AiOutlineSearch /></button>
+                <input onKeyUp={filter} type="search" name="" id="search" onChange={handlChange} value={searchVal} placeholder='Enter email id' className='form-control py-2' />
+                <button className='btn btn-primary mx-2' onClick={handleSearch}><AiOutlineSearch /></button>
                 <button className='btn btn-primary mx-4'>Download</button>
             </div>
             <div className="setting-list">

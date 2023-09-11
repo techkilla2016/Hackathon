@@ -1,25 +1,62 @@
-"use client"
-import React, { useEffect, useState } from 'react'
-import { MdOutlineModeEditOutline } from 'react-icons/md'
-import { db } from '../../firebaseConfig';
-import { collection, addDoc, setDoc, getDoc, doc, getDocs, onSnapshot } from "firebase/firestore";
+import React, { useState } from 'react'
+import { IoMdArrowDropdown } from 'react-icons/io'
+const Setting = () => {
 
-var subscribe = undefined;
+    const dataInit = {
+        isHacker: true,
+        isAdvisor: true,
+        hasProject: true,
+    }
 
-const Setting = ({ city, building }) => {
+    const list = [
+        {
+            key: "isHacker",
+            cls: '',
+            title: "Is Hacker",
+        },
+        {
+            key: 'isAdvisor',
+            cls: 'row-1',
+            title: "Is Advisor"
+        },
+        {
+            key: 'hasProject',
+            cls: '',
+            title: "Has Project"
+        },
+    ]
+
+    const [isShow, setIsShow] = useState(false)
+    const [mouse, setMouse] = useState({
+        x: 0,
+        y: 0
+    })
+    const [userData, setUserData] = useState(dataInit)
+    const [curData, setCurData] = useState({})
+    const handleToggle = (event, data) => {
+        setCurData(data)
+        setIsShow(false)
+        setMouse({
+            x: event.pageX,
+            y: event.pageY,
+        })
+        setIsShow(false)
+        setTimeout(() => {
+            setIsShow(true)
+        }, 100)
+    }
+
+    const handleSelectOption = (pyload, isValue) => {
+        setUserData({
+            ...userData,
+            [pyload]: isValue
+        })
+    }
 
 
-    const [cityData, setCityData] = useState([]);
-
-    useEffect(() => {
-        subscribe = onSnapshot(collection(db, "Users"),
-            (snapshot) => {
-                var docs = snapshot.docs;
-
-                setCityData(docs)
-            });
-    }, [!subscribe]
-    )
+    const handleUpdate = async () => {
+        console.log(userData)
+    }
 
     return (
         <div className='setting py-4'>
@@ -27,54 +64,37 @@ const Setting = ({ city, building }) => {
                 <table>
                     <thead>
                         <tr className='row-1'>
-                            <th>City</th>
-                            <th>alias</th>
-                            <th>SentTime</th>
-                            <th>ScanTime</th>
-                            <th>Has Project</th>
-                            <th>Is Advisor</th>
-                            <th>Is Hacker</th>
-                            <th>Email</th>
-                            <th>Building</th>
-                            <th>ScanForSelf</th>
-                            <th>OtherEmail</th>
-                            {/* <th>Option</th> */}
+                            <th>Heading</th>
+                            <th>Eligibility</th>
                         </tr>
                     </thead>
                     <tbody>
                         {
-                            cityData?.map((curItem, keys) => {
-                                // console.log(building.toLowerCase() === curItem.data().obj.building,city == curItem.data().obj.City)
-                                // console.log(building.toLowerCase(),curItem.data().obj.building,city,curItem.data().obj.City)
-                                if ((building?.toLowerCase() === curItem?.data().obj?.building) || city == "all") {
-                                    console.log(curItem.data().obj?.scanForSelf)
-
-                                    return (
-
-                                        <tr key={keys} className={`${keys % 2 !== 0 && 'row-1'}`}>
-                                            <td>{curItem?.data()?.obj?.City}</td>
-                                            <td>{curItem?.data()?.obj?.display_name}</td>
-                                            <td>{curItem?.data()?.obj?.hackathon_registration_date}</td>
-                                            <td>{curItem?.data()?.obj?.scanTime}</td>
-                                            <td>{curItem?.data()?.obj?.has_project}</td>
-                                            <td>{curItem?.data()?.obj?.is_advisor}</td>
-                                            <td>{curItem?.data()?.obj?.is_hacker}</td>
-                                            <td>{curItem?.data()?.obj?.mail}</td>
-                                            <td>{curItem?.data()?.obj?.building}</td>
-                                            <td>{curItem?.data()?.obj?.scanForSelf == undefined ? "" : "YES"}</td>
-                                            <td>{curItem?.data()?.obj?.emailAddress}</td>
-                                            {/* <td>
-                                                <button className='btn edit'>
-                                                    <MdOutlineModeEditOutline />
-                                           np     </button>
-                                            </td> */}
-                                        </tr>)
-                                }
+                            list?.map((item, keys) => {
+                                return <tr className={item?.cls} key={keys}>
+                                    <td>{item?.title}</td>
+                                    <td className='toggle_td'>
+                                        <button className="btn display" onClick={(event) => { handleToggle(event, item) }}>
+                                            <span>{userData[item?.key] ? "Yes" : "No"}</span>
+                                            <IoMdArrowDropdown />
+                                        </button>
+                                    </td>
+                                </tr>
                             })
                         }
-
                     </tbody>
                 </table>
+                {
+                    isShow && <div className="toggle-btn-box" onClick={() => setIsShow(false)}>
+                        <div className="togggle-option" style={{ left: `${mouse.x}px`, top: `${mouse.y}px` }}>
+                            <button className='btn btn-primary' onClick={() => handleSelectOption(curData?.key, true)}>Yes</button>
+                            <button className='btn btn-primary mt-2' onClick={() => handleSelectOption(curData?.key, false)}>No</button>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div className="py-4 d-flex justify-content-end">
+                <button className='btn btn-primary' onClick={handleUpdate}>Update</button>
             </div>
         </div>
     )

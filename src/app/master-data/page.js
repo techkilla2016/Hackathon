@@ -21,8 +21,8 @@ var subscribe = undefined;
 
 const City = ({ params }) => {
 
-    const [numEmails, setNumEmails] = useState(0)
-    const [numScanned, setNumScanned] = useState(0)
+    const [numEmails,setNumEmails] = useState(0)
+    const [numScanned,setNumScanned] = useState(0)
 
     useEffect(() => {
         subscribe = onSnapshot(collection(db, "Users"),
@@ -30,20 +30,27 @@ const City = ({ params }) => {
                 var docs = snapshot.docs;
                 var emails = 0;
                 var scanned = 0;
-                docs.map((doc) => {
-                    if (doc.data().obj.hackathon_registration_date != undefined) {
+               docs.map((doc)=>{
+
+                
+                    if(doc.data().obj.EmailTime != undefined)
+                    {
                         emails++;
                     }
+                
 
-                    if (doc.data().obj.scanTime != undefined) {
-                        scanned++;
+                   
+                    if(doc.data().obj.scanTime != undefined)
+                    {
+                         scanned++;
                     }
-                })
+                
+               })
 
-                setNumEmails(emails);
-                setNumScanned(scanned);
+               setNumEmails(emails);
+               setNumScanned(scanned);
             });
-    }
+        }
     )
 
     return (

@@ -38,7 +38,7 @@ const Aside = () => {
                     </div>
 
                     {/* setting  */}
-                    <div className="aside-setting">
+                    {/* <div className="aside-setting">
                         <Link href='/settings' className="list d-flex align-items-center">
                             <div className="icon">
                                 <AiFillSetting />
@@ -47,7 +47,7 @@ const Aside = () => {
                                 Settings
                             </div>
                         </Link>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </aside>

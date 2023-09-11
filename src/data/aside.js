@@ -5,12 +5,12 @@ import { BsClipboardData } from 'react-icons/bs'
 export const asideMenu = [
     {
         icon: <LuLayoutDashboard />,
-        title: 'Dashbord',
+        title: 'Dashboard',
         link: '/'
     },
     {
         icon: <BsClipboardData />,
         title: 'Master Data',
-        link: '/master'
+        link: '/master-data'
     },
 ]

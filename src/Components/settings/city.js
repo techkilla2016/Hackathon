@@ -9,9 +9,8 @@ var subscribe = undefined;
 
 const CityTable = ({ city, building }) => {
 
-
+    const [searchVal, setSearchVal] = useState('')
     const [cityData, setCityData] = useState([]);
-
     useEffect(() => {
         subscribe = onSnapshot(collection(db, "Users"),
             (snapshot) => {
@@ -21,17 +20,39 @@ const CityTable = ({ city, building }) => {
     }, [!subscribe]
     )
 
-    const filter = (e)=>{
-        cityData.filter((doc)=>{
-           return false
+    const filter = (e) => {
+        cityData.filter((doc) => {
+            return false
         })
     }
 
+    const handlChange = ({ target }) => {
+        setSearchVal(target.value)
+        if (target.value == '') {
+            subscribe = onSnapshot(collection(db, "Users"),
+                (snapshot) => {
+                    var docs = snapshot.docs;
+                    setCityData(docs)
+                });
+        }
+        handleSearch()
+    }
+
+
+    const handleSearch = () => {
+        const newCity = cityData.filter((item) => {
+            const val = item.data().obj?.Email
+            if (val.includes(searchVal)) {
+                return item
+            }
+        })
+        setCityData(newCity)
+    }
     var array = [];
 
-    const download = ()=>{
+    const download = () => {
         var date = new Date();
-       let fname =  building.toLowerCase() + "_" + date.getDate().toString() + "-" + (date.getMonth() +1).toString() + "-" + date.getFullYear().toString() + "_" + date.getHours().toString()+"-"+date.getMinutes().toString()+"-"+date.getSeconds().toString();
+        let fname = building.toLowerCase() + "_" + date.getDate().toString() + "-" + (date.getMonth() + 1).toString() + "-" + date.getFullYear().toString() + "_" + date.getHours().toString() + "-" + date.getMinutes().toString() + "-" + date.getSeconds().toString();
 
         exportToExcel(array, fname)
     }
@@ -39,8 +60,8 @@ const CityTable = ({ city, building }) => {
     return (
         <div className='setting py-4'>
             <div className="search d-flex justify-content-start py-4">
-                <input onKeyUp={filter} type="search" name="" id="search" placeholder='Enter email id' className='form-control py-2' />
-                <button className='btn btn-primary mx-2'><AiOutlineSearch /></button>
+                <input onKeyUp={filter} type="search" name="search" onChange={handlChange} value={searchVal} id="search" placeholder='Enter email id' className='form-control py-2' />
+                <button className='btn btn-primary mx-2' onClick={handleSearch}><AiOutlineSearch /></button>
                 <button onClick={download} className='btn btn-primary mx-4'>Download</button>
             </div>
             <div className="setting-list">
@@ -59,18 +80,18 @@ const CityTable = ({ city, building }) => {
                     </thead>
                     <tbody>
                         {
-                        
+
                             cityData?.map((curItem, keys) => {
                                 // console.log(building.toLowerCase() === curItem.data().obj.building,city == curItem.data().obj.City)
                                 // console.log(building.toLowerCase(), curItem.data().obj.building, city, curItem.data().obj.City)
                                 if ((building.toLowerCase() === curItem.data().obj?.building) || city == "all") {
-                                    let newObj = {...curItem.data().obj};
+                                    let newObj = { ...curItem.data().obj };
                                     delete newObj["Sno"];
 
                                     array.push(newObj);
                                     return (
 
-                                      
+
                                         <tr key={keys} className={`${keys % 2 !== 0 && 'row-1'}`}>
                                             <td>{curItem.data().obj?.Name}</td>
                                             <td>{curItem.data().obj?.EmailTime}</td>
@@ -88,14 +109,14 @@ const CityTable = ({ city, building }) => {
                                         </tr>)
                                 }
 
-                               
-                               
+
+
                             })
 
-                         
-                           
+
+
                         }
-                           
+
 
                     </tbody>
                 </table>
